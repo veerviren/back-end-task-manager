@@ -11,17 +11,20 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  isDeleted Boolean   @default(false)
-  name      String?
-  age       Int?
-  email     String    @unique
-  pass      String
-  sellingProducts Product[] @relation("SellerProducts")
-  boughtProducts  Product[] @relation("BuyerProducts")
+  id                String    @id @default(uuid())
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+  isDeleted         Boolean   @default(false)
+  name              String?
+  age               Int?
+  email             String    @unique
+  pass              String
+  isVerified        Boolean   @default(false)
+  verificationToken String?
+  verificationExpires DateTime?
+  sellingProducts   Product[] @relation("SellerProducts")
+  boughtProducts    Product[] @relation("BuyerProducts")
 }
 
 model Product {

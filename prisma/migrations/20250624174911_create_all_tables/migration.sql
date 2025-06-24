@@ -9,6 +9,9 @@ CREATE TABLE "User" (
     "age" INTEGER,
     "email" TEXT NOT NULL,
     "pass" TEXT NOT NULL,
+    "isVerified" BOOLEAN NOT NULL DEFAULT false,
+    "verificationToken" TEXT,
+    "verificationExpires" TIMESTAMP(3),
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
