@@ -18,14 +18,30 @@ export const getAllProducts = async (req: Request, res: Response) => {
 
 export const createProduct = async (req: Request, res: Response) => {
     console.log("POST '/product created'");
-    const userId = (req as any).locals.userId;
-    const {  name, description, dueDate } = req.body;
+    const sellerId = (req as any).locals.userId;
+    const {
+        name,
+        description,
+        price,
+        category,
+        images,
+        isFeatured,
+        discount,
+        tags
+    } = req.body;
+    
     const productDetails: Product = {
         name: name,
         description: description,
-        dueDate: dueDate,
-        userId: userId
+        price: price || 0, // Default price to 0 if not provided
+        sellerId: sellerId,
+        category: category,
+        images: images,
+        isFeatured: isFeatured,
+        discount: discount,
+        tags: tags
     };
+    
     const response = productService.createProductService(productDetails, res);
     return response;
 }

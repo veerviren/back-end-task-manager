@@ -20,18 +20,30 @@ model User {
   age       Int?
   email     String    @unique
   pass      String
-  products  Product[]
+  sellingProducts Product[] @relation("SellerProducts")
+  boughtProducts  Product[] @relation("BuyerProducts")
 }
 
 model Product {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?  
   isDeleted   Boolean   @default(false)
   name        String
   description String?
-  userId      String // Changed to String to match User id type
-  user        User      @relation(fields: [userId], references: [id])
-  dueDate     DateTime?
+  price       Float
+  category    String?
+  isSold      Boolean   @default(false)
+  soldAt      DateTime?
+  images      String[]  // Array of image URLs
+  sellerId    String    // ID of the user who is selling the product
+  seller      User      @relation("SellerProducts", fields: [sellerId], references: [id])
+  buyerId     String?   // ID of the user who bought the product (null if not sold)
+  buyer       User?     @relation("BuyerProducts", fields: [buyerId], references: [id])
+  rating      Float?    // Average rating
+  specifications Json?  // Flexible field for technical specifications
+  isFeatured  Boolean   @default(false)
+  discount    Float?    // Discount percentage
+  tags        String[]  // Search tags
 }
