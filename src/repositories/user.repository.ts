@@ -24,7 +24,20 @@ export class UserMethods {
     }
 
     deleteOneUser = async (filter: any | null) => {
-        const deletedUser = await prisma.user.delete(filter)
+        // First delete all related tasks, then delete the user within a transaction
+        const deletedUser = await prisma.$transaction(async (tx) => {
+            // Delete all tasks associated with this user
+            await tx.task.deleteMany({
+                where: {
+                    userId: filter.where.id
+                }
+            });
+            
+            // Then delete the user
+            return tx.user.delete(filter);
+        });
+        
+        return deletedUser;
     }
 
     updateOneUser = async (payload: any | null) => {

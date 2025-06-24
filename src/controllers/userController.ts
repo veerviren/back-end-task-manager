@@ -35,7 +35,8 @@ export const getAllUsers = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
     const { id } = req.params
     console.log(`DELETE '/${id}`)
-    const response = userService.deleteUserServiceasync(id, res)
+    const response = userService.deleteUserService(id, res)
+    return response
 }
 
 export const updateUser = async (req: Request, res: Response) => {
