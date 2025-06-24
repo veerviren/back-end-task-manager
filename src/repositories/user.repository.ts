@@ -41,10 +41,10 @@ export class UserMethods {
 
     // Hard delete (for admin purposes only)
     deleteOneUser = async (filter: any | null) => {
-        // First delete all related tasks, then delete the user within a transaction
+        // First delete all related products, then delete the user within a transaction
         const deletedUser = await prisma.$transaction(async (tx) => {
-            // Delete all tasks associated with this user
-            await tx.task.deleteMany({
+            // Delete all products associated with this user
+            await tx.product.deleteMany({
                 where: {
                     userId: filter.where.id
                 }
@@ -65,8 +65,8 @@ export class UserMethods {
             data: {
                 isDeleted: true,
                 deletedAt: now,
-                // Also mark all related tasks as deleted
-                tasks: {
+                // Also mark all related products as deleted
+                products: {
                     updateMany: {
                         where: {
                             userId: filter.where.id,
