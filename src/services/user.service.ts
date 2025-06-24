@@ -11,7 +11,7 @@ const userMethods = new UserMethods()
 export class UserService {
 
     generateToken = (payload: Payload) => {
-        const token = jwt.sign(payload.userId, process.env.SECRET)
+        const token = jwt.sign({ userId: payload.userId }, process.env.JWT_SECRET)
         return token
     }
 
@@ -22,26 +22,37 @@ export class UserService {
             }
             const filter = { where: { email: email } }
             const user = await userMethods.findUniqueUser(filter)
-            const matchPassword = await bcrypt.compare(pass, user?.pass)
-            if (!matchPassword) {
-                return res.status(404).json({ message: "Incorrect password" })
-            }
+            
             if (!user) {
-                return res.status(404).json({ message: "Unauthorized user!" })
+                return res.status(404).json({ message: "User not found. Please check your email or sign up." })
             }
+            
+            const matchPassword = await bcrypt.compare(pass, user.pass)
+            if (!matchPassword) {
+                return res.status(401).json({ message: "Incorrect password" })
+            }
+            
             const id = user.id
             const token = this.generateToken({ userId: id })
             return res.status(200).json({ user, token: token })
         }
-        catch (err) {
+        catch (err: any) {
             console.log(err)
-            return res.status(400).json({ message: "Some error occured" })
+            return res.status(400).json({ message: "Some error occurred" })
         }
     }
 
     signUpService = async (user: User, res: Response) => {
         const { email, pass, name, age } = user
         try {
+            // Check if user with email already exists
+            const existingUser = await userMethods.findUniqueUser({
+                where: { email: email }
+            });
+            
+            if (existingUser) {
+                return res.status(400).json({ message: "Email already in use. Please use a different email or sign in." });
+            }
 
             const hashedPass = await bcrypt.hash(pass, 10)
             const user: User = {
@@ -55,32 +66,44 @@ export class UserService {
             const token = this.generateToken({ userId: newUser.id })
             return res.status(200).json({ user: newUser, token: token })
         }
-        catch (err) {
+        catch (err: any) {
             console.log(err)
-            return res.status(400).json({ message: "Some error occured" })
+            // Check for Prisma unique constraint error
+            if (err.code === 'P2002' && err.meta?.target?.includes('email')) {
+                return res.status(400).json({ message: "Email already in use. Please use a different email or sign in." });
+            }
+            return res.status(400).json({ message: "Some error occurred" })
         }
     }
 
-    getAllUserService = async (res: Response) => {
+    getAllUserService = async (includeDeleted: boolean, res: Response) => {
         try {
-            const users = await userMethods.findAllUser()
+            const users = await userMethods.findAllUser(includeDeleted)
             return res.status(200).json(users)
         }
-        catch (err) {
+        catch (err: any) {
             console.log(err)
-            return res.status(400).json({ message: "Some error occured" })
+            return res.status(400).json({ message: "Some error occurred" })
         }
     }
 
-    deleteUserServiceasync = async (id: string, res: Response) => {
+    deleteUserService = async (id: string, res: Response) => {
         try {
             const filter = { where: { id: id } }
-            const deletedUser = await userMethods.deleteOneUser(filter)
-            return res.status(200).json(deletedUser)
+            // Use soft delete instead of hard delete
+            const deletedUser = await userMethods.softDeleteOneUser(filter)
+            return res.status(200).json({
+                message: "User successfully deleted",
+                user: {
+                    id: deletedUser.id,
+                    email: deletedUser.email,
+                    deletedAt: deletedUser.deletedAt || null
+                }
+            })
         }
         catch (err) {
             console.log(err)
-            return res.status(400).json({ message: "Some error occured" })
+            return res.status(400).json({ message: "Some error occurred" })
         }
     }
 
@@ -96,6 +119,23 @@ export class UserService {
         catch (err) {
             console.log(err)
             return res.status(400).json({ message: "Some error occured" })
+        }
+    }
+
+    getUserByIdService = async (id: string, res: Response) => {
+        try {
+            const filter = { where: { id: id } };
+            const user = await userMethods.findUniqueUser(filter);
+            
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+            
+            return res.status(200).json(user);
+        }
+        catch (err) {
+            console.log(err);
+            return res.status(400).json({ message: "Some error occurred" });
         }
     }
 }

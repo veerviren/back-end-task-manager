@@ -26,7 +26,9 @@ export const signUp = async (req: Request, res: Response) => {
 
 export const getAllUsers = async (req: Request, res: Response) => {
     console.log("GET '/'")
-    const response = userService.getAllUserService(res)
+    // Check for query parameter to include soft-deleted users
+    const includeDeleted = req.query.includeDeleted === 'true'
+    const response = userService.getAllUserService(includeDeleted, res)
     return response
 }
 
@@ -35,7 +37,8 @@ export const getAllUsers = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
     const { id } = req.params
     console.log(`DELETE '/${id}`)
-    const response = userService.deleteUserServiceasync(id, res)
+    const response = userService.deleteUserService(id, res)
+    return response
 }
 
 export const updateUser = async (req: Request, res: Response) => {
@@ -43,4 +46,12 @@ export const updateUser = async (req: Request, res: Response) => {
     const user = req.body
     console.log(`PATCH '/${id}'`)
     const response = userService.updateUserService(id, user, res)
+    return response
+}
+
+export const getUserById = async (req: Request, res: Response) => {
+    const { id } = req.params
+    console.log(`GET '/${id}'`)
+    const response = userService.getUserByIdService(id, res)
+    return response
 }
