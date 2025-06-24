@@ -37,6 +37,16 @@ export interface Payload {
  *         pass:
  *           type: string
  *           description: The password of the user (hashed)
+ *         isVerified:
+ *           type: boolean
+ *           description: Whether the user's email is verified
+ *         verificationToken:
+ *           type: string
+ *           description: Token used to verify the user's email
+ *         verificationExpires:
+ *           type: string
+ *           format: date-time
+ *           description: Expiration date for verification token
  *         deletedAt:
  *           type: string
  *           format: date-time
@@ -50,6 +60,9 @@ export interface User {
     age?: number,
     email: string,
     pass: string,
+    isVerified?: boolean,
+    verificationToken?: string,
+    verificationExpires?: Date,
     deletedAt?: Date,
     isDeleted?: boolean,
 }

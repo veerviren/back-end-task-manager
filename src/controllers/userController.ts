@@ -55,3 +55,17 @@ export const getUserById = async (req: Request, res: Response) => {
     const response = userService.getUserByIdService(id, res)
     return response
 }
+
+export const verifyEmail = async (req: Request, res: Response) => {
+    const { token } = req.params
+    console.log(`GET '/verify/${token}'`)
+    const response = userService.verifyEmailService(token, res)
+    return response
+}
+
+export const resendVerification = async (req: Request, res: Response) => {
+    const { email } = req.body
+    console.log(`POST '/resend-verification'`)
+    const response = userService.resendVerificationService(email, res)
+    return response
+}

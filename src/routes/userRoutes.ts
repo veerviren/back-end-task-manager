@@ -2,7 +2,8 @@ const express = require('express')
 const router = express.Router()
 
 import {
-    signIn, getAllUsers, signUp, deleteUser, updateUser, getUserById
+    signIn, getAllUsers, signUp, deleteUser, updateUser, getUserById,
+    verifyEmail, resendVerification
 } from '../controllers/userController'
 
 import { userAuth } from '../middleware/jwt.middleware'
@@ -188,5 +189,56 @@ router.delete('/:id', userAuth, deleteUser)
  *         description: Not authenticated
  */
 router.patch('/:id', userAuth, updateUser)
+
+/**
+ * @swagger
+ * /user/verify/{token}:
+ *   get:
+ *     summary: Verify user's email address using a verification token
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Verification token sent to user's email
+ *     responses:
+ *       200:
+ *         description: Email verified successfully
+ *       400:
+ *         description: Invalid or expired verification token
+ *       404:
+ *         description: User not found or invalid token
+ */
+router.get('/verify/:token', verifyEmail)
+
+/**
+ * @swagger
+ * /user/resend-verification:
+ *   post:
+ *     summary: Resend verification email to user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: User email address
+ *     responses:
+ *       200:
+ *         description: Verification email sent successfully
+ *       400:
+ *         description: Email already verified or invalid request
+ *       404:
+ *         description: User not found
+ */
+router.post('/resend-verification', resendVerification)
 
 module.exports = router

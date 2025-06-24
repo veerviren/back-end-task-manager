@@ -20,8 +20,18 @@ export const userAuth = async (req: Request, res: Response, next: NextFunction) 
             return res.status(404).json({ message: "User not found. The user associated with this token may have been deleted." })
         }
         
+        // Check if the user's email is verified
+        if (!user.isVerified) {
+            console.log("Unverified user attempted to access protected route:", user.email);
+            return res.status(403).json({ 
+                message: "Email verification required. Please verify your email before accessing this resource.",
+                verified: false
+            });
+        }
+        
         (req as any).locals = {
             userId: userId,
+            isVerified: user.isVerified
         };
         next()
     }
