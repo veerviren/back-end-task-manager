@@ -12,7 +12,7 @@ export class ProductMethods {
         const product = await prisma.product.findMany(
             {
                 where: {
-                    userId: userId,
+                    sellerId: userId,
                 },
             },
         );
@@ -24,10 +24,10 @@ export class ProductMethods {
         return createdProduct;
     }
 
-    deleteOneProduct = async (productId: string, userId: string) => {
+    deleteOneProduct = async (productId: string, sellerId: string) => {
 
         const deletedProduct = await prisma.product.update({
-            where: { id: productId, userId: userId },
+            where: { id: productId, sellerId: sellerId },
             data: {
                 deletedAt: new Date(),
                 isDeleted: true,
@@ -39,11 +39,11 @@ export class ProductMethods {
 
 
 
-    updateOneProduct = async (productId: string, userId: string, payload: any | null) => {
+    updateOneProduct = async (productId: string, sellerId: string, payload: any | null) => {
         const product = await prisma.product.findUnique({
             where: {
                 id: productId,
-                userId: userId,
+                sellerId: sellerId,
             },
         });
 
@@ -55,7 +55,12 @@ export class ProductMethods {
         const updateData = {
             name: payload.data.name || product.name,
             description: payload.data.description || product.description,
-            dueDate: payload.data.dueDate || product.dueDate,
+            price: payload.data.price || product.price,
+            category: payload.data.category || product.category,
+            images: payload.data.images || product.images,
+            isFeatured: payload.data.isFeatured !== undefined ? payload.data.isFeatured : product.isFeatured,
+            discount: payload.data.discount !== undefined ? payload.data.discount : product.discount,
+            tags: payload.data.tags || product.tags,
             updatedAt: new Date(),
         };
 

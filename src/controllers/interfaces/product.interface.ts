@@ -5,26 +5,68 @@
  *     Product:
  *       type: object
  *       required:
- *         - userId
+ *         - sellerId
  *         - name
+ *         - price
  *       properties:
- *         userId:
+ *         sellerId:
  *           type: string
- *           description: The ID of the user who owns this product
+ *           description: The ID of the user who is selling this product
  *         name:
  *           type: string
  *           description: The name of the product
  *         description:
  *           type: string
  *           description: Detailed description of the product
- *         dueDate:
+ *         price:
+ *           type: number
+ *           format: float
+ *           description: The price of the product
+ *         category:
+ *           type: string
+ *           description: Product category
+ *         isSold:
+ *           type: boolean
+ *           description: Whether the product has been sold
+ *         soldAt:
  *           type: string
  *           format: date-time
- *           description: The due date for the product (if applicable)
+ *           description: When the product was sold
+ *         buyerId:
+ *           type: string
+ *           description: ID of the user who bought the product
+ *         images:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: URLs of product images
+ *         rating:
+ *           type: number
+ *           description: Average product rating
+ *         isFeatured:
+ *           type: boolean
+ *           description: Whether the product is featured
+ *         discount:
+ *           type: number
+ *           description: Discount percentage
+ *         tags:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: Product tags for search
  */
 export interface Product {
-    userId: string
+    sellerId: string
     name: string;
     description?: string;
-    dueDate?: Date;
+    price: number;
+    category?: string;
+    isSold?: boolean;
+    soldAt?: Date;
+    buyerId?: string;
+    images?: string[];
+    rating?: number;
+    isFeatured?: boolean;
+    discount?: number;
+    tags?: string[];
 }

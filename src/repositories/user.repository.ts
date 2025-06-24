@@ -43,10 +43,10 @@ export class UserMethods {
     deleteOneUser = async (filter: any | null) => {
         // First delete all related products, then delete the user within a transaction
         const deletedUser = await prisma.$transaction(async (tx) => {
-            // Delete all products associated with this user
+            // Delete all products associated with this user (as seller)
             await tx.product.deleteMany({
                 where: {
-                    userId: filter.where.id
+                    sellerId: filter.where.id
                 }
             });
             
@@ -66,10 +66,10 @@ export class UserMethods {
                 isDeleted: true,
                 deletedAt: now,
                 // Also mark all related products as deleted
-                products: {
+                sellingProducts: {
                     updateMany: {
                         where: {
-                            userId: filter.where.id,
+                            sellerId: filter.where.id,
                             isDeleted: false
                         },
                         data: {
