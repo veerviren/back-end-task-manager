@@ -33,7 +33,9 @@ export class UserMethods {
 
 
     createOneUser = async (payload: Payload) => {
-        const createdUser = await prisma.user.create(payload)
+        const createdUser = await prisma.user.create({
+            data: payload.data
+        })
         return createdUser
     }
 

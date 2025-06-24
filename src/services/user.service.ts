@@ -97,7 +97,7 @@ export class UserService {
                 user: {
                     id: deletedUser.id,
                     email: deletedUser.email,
-                    deletedAt: deletedUser.deletedAt
+                    deletedAt: deletedUser.deletedAt || null
                 }
             })
         }
