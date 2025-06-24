@@ -121,5 +121,22 @@ export class UserService {
             return res.status(400).json({ message: "Some error occured" })
         }
     }
+
+    getUserByIdService = async (id: string, res: Response) => {
+        try {
+            const filter = { where: { id: id } };
+            const user = await userMethods.findUniqueUser(filter);
+            
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+            
+            return res.status(200).json(user);
+        }
+        catch (err) {
+            console.log(err);
+            return res.status(400).json({ message: "Some error occurred" });
+        }
+    }
 }
 

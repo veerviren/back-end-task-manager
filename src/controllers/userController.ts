@@ -46,4 +46,12 @@ export const updateUser = async (req: Request, res: Response) => {
     const user = req.body
     console.log(`PATCH '/${id}'`)
     const response = userService.updateUserService(id, user, res)
+    return response
+}
+
+export const getUserById = async (req: Request, res: Response) => {
+    const { id } = req.params
+    console.log(`GET '/${id}'`)
+    const response = userService.getUserByIdService(id, res)
+    return response
 }
