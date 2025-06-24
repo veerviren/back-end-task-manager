@@ -26,7 +26,9 @@ export const signUp = async (req: Request, res: Response) => {
 
 export const getAllUsers = async (req: Request, res: Response) => {
     console.log("GET '/'")
-    const response = userService.getAllUserService(res)
+    // Check for query parameter to include soft-deleted users
+    const includeDeleted = req.query.includeDeleted === 'true'
+    const response = userService.getAllUserService(includeDeleted, res)
     return response
 }
 

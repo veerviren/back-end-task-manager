@@ -76,9 +76,9 @@ export class UserService {
         }
     }
 
-    getAllUserService = async (res: Response) => {
+    getAllUserService = async (includeDeleted: boolean, res: Response) => {
         try {
-            const users = await userMethods.findAllUser()
+            const users = await userMethods.findAllUser(includeDeleted)
             return res.status(200).json(users)
         }
         catch (err: any) {
@@ -90,8 +90,16 @@ export class UserService {
     deleteUserService = async (id: string, res: Response) => {
         try {
             const filter = { where: { id: id } }
-            const deletedUser = await userMethods.deleteOneUser(filter)
-            return res.status(200).json(deletedUser)
+            // Use soft delete instead of hard delete
+            const deletedUser = await userMethods.softDeleteOneUser(filter)
+            return res.status(200).json({
+                message: "User successfully deleted",
+                user: {
+                    id: deletedUser.id,
+                    email: deletedUser.email,
+                    deletedAt: deletedUser.deletedAt
+                }
+            })
         }
         catch (err) {
             console.log(err)

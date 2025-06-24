@@ -6,4 +6,6 @@ export interface User {
     age?: number,
     email: string,
     pass: string,
+    deletedAt?: Date,
+    isDeleted?: boolean,
 }
