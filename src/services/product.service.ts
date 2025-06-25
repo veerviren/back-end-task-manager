@@ -10,9 +10,9 @@ const productMethods = new ProductMethods()
 
 export class ProductService{
 
-    getAllProductService = async (userId: String, res: Response) => {
+    getAllProductService = async (userId: String, res: Response, status?: string) => {
         try {
-            const products = await productMethods.findAllProduct(userId)
+            const products = await productMethods.findAllProduct(userId, status)
             return res.status(200).json({ products })
         }
         catch (err) {

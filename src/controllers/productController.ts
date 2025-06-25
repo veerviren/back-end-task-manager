@@ -11,8 +11,9 @@ const productService = new ProductService()
 export const getAllProducts = async (req: Request, res: Response) => {
     console.log("GET '/products'");
     const userId = (req as any).locals.userId;
-    console.log("userId is", userId);
-    const response = productService.getAllProductService(userId, res);
+    const status = req.query.status as string | undefined;
+    console.log("userId is", userId, "status is", status);
+    const response = productService.getAllProductService(userId, res, status);
     return response;
 }
 
