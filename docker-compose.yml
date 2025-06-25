@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/task_manager_db
+      - NODE_ENV=development
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+      - /app/node_modules
+    entrypoint: ["/app/docker-entrypoint.sh"]
+
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=task_manager_db
+    # Removed persistent volume to ensure fresh database on each run
