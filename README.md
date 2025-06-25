@@ -1,4 +1,4 @@
-# Back-End Task Manager
+# Campus Exchange
 
 A modern Node.js backend application for managing products and users built with Express, TypeScript, Prisma ORM, and PostgreSQL.
 
