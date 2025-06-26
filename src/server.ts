@@ -16,28 +16,10 @@ app.use(express.json());
 // Initialize Swagger
 setupSwagger(app);
 
-// Add a health check endpoint for Cloud Run
-app.get('/_health', (req, res) => {
-  res.status(200).send({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-// Add a debug endpoint to help troubleshoot Cloud Run issues
-app.get('/_debug', (req, res) => {
-  const debugInfo = {
-    env: process.env,
-    nodeVersion: process.version,
-    platform: process.platform,
-    uptime: process.uptime(),
-    currentDir: __dirname,
-    timestamp: new Date().toISOString()
-  };
-  res.status(200).send(debugInfo);
-});
-
 app.use("/user", userRoutes);
 app.use('/products', productRoutes);
 
-const port = parseInt(process.env.PORT || '8080', 10); // Ensure port is a number
-const server = app.listen(port, '0.0.0.0', () => {
-    console.log(`Server listening on 0.0.0.0:${port}`);
+const port = process.env.PORT || 8080; // Using process.env.PORT if available, otherwise default to 8080 for Cloud Run
+const server = app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
 });

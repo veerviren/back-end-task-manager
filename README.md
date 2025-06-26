@@ -114,19 +114,10 @@ This application is configured for deployment to Google Cloud Run, a fully manag
 
 1. **Build and Deploy to Cloud Run**
 
-   Use the provided deployment script:
-   
-   ```bash
-   ./deploy-to-cloud-run.sh
-   ```
-   
-   Or manually:
-   
    ```bash
    gcloud run deploy campus-exchange \
      --source . \
      --region us-central1 \
-     --dockerfile Dockerfile.cloud \
      --allow-unauthenticated
    ```
 
