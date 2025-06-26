@@ -99,3 +99,81 @@ On each Docker container startup, the database is automatically reset and migrat
 - `/api/products` - Product management
 
 For detailed API documentation, visit the Swagger UI at `/api-docs` when the server is running.
+
+## Deployment to Google Cloud Run
+
+This application is configured for deployment to Google Cloud Run, a fully managed serverless platform for containerized applications.
+
+### Prerequisites for Cloud Run Deployment
+
+- Google Cloud Platform account
+- Google Cloud CLI (`gcloud`) installed and configured
+- Cloud SQL PostgreSQL instance
+
+### Deployment Steps
+
+1. **Build and Deploy to Cloud Run**
+
+   ```bash
+   gcloud run deploy campus-exchange \
+     --source . \
+     --region us-central1 \
+     --allow-unauthenticated
+   ```
+
+2. **Alternative Manual Deployment**
+
+   ```bash
+   # Build and push the container
+   gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/campus-exchange
+
+   # Deploy to Cloud Run
+   gcloud run deploy campus-exchange \
+     --image gcr.io/YOUR_PROJECT_ID/campus-exchange \
+     --region us-central1 \
+     --allow-unauthenticated
+   ```
+
+3. **Setting Environment Variables**
+
+   ```bash
+   gcloud run services update campus-exchange \
+     --set-env-vars="DATABASE_URL=your-postgres-url,JWT_SECRET=xyz,EMAIL_USER=abc,EMAIL_PASS=123" \
+     --region us-central1
+   ```
+
+4. **Connect to Cloud SQL**
+
+   To use with Cloud SQL, create an instance and connect with the following URL format:
+
+   ```
+   postgresql://user:password@/dbname?host=/cloudsql/PROJECT_ID:REGION:INSTANCE
+   ```
+
+   Add the Cloud SQL instance to your Cloud Run service:
+
+   ```bash
+   gcloud run services update campus-exchange \
+     --add-cloudsql-instances=PROJECT_ID:REGION:INSTANCE \
+     --region us-central1
+   ```
+
+### CI/CD Setup
+
+This repository includes GitHub Actions workflow configuration for continuous deployment to Cloud Run. To use it:
+
+1. Set up GitHub repository secrets:
+   - `GCP_PROJECT_ID`: Your Google Cloud Project ID
+   - `GCP_SA_KEY`: Your service account key (JSON)
+   - `CLOUD_SQL_CONNECTION_NAME`: Your Cloud SQL instance connection name
+   - `DATABASE_URL`: PostgreSQL connection string
+   - Other environment variables (JWT_SECRET, EMAIL_* variables, etc.)
+
+2. Push changes to the main branch to trigger automatic deployment.
+
+### Important Production Considerations
+
+- Database migrations are handled automatically but don't use `migrate reset` in production
+- Secure sensitive environment variables using Secret Manager
+- Consider implementing authentication for your API endpoints
+- Set up monitoring and alerting through Cloud Monitoring

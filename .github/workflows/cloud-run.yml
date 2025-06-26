@@ -1,0 +1,39 @@
+name: Build and Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main  # Set a branch name to trigger deployment
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+
+    - name: Authorize Docker push
+      run: gcloud auth configure-docker
+
+    - name: Build and Push Container
+      run: |
+        docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/campus-exchange:${{ github.sha }} .
+        docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/campus-exchange:${{ github.sha }}
+
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy campus-exchange \
+          --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/campus-exchange:${{ github.sha }} \
+          --region us-central1 \
+          --platform managed \
+          --allow-unauthenticated \
+          --add-cloudsql-instances ${{ secrets.CLOUD_SQL_CONNECTION_NAME }} \
+          --set-env-vars "NODE_ENV=production,DATABASE_URL=${{ secrets.DATABASE_URL }},BASE_URL=${{ secrets.BASE_URL }},JWT_SECRET=${{ secrets.JWT_SECRET }},EMAIL_HOST=${{ secrets.EMAIL_HOST }},EMAIL_PORT=${{ secrets.EMAIL_PORT }},EMAIL_SECURE=${{ secrets.EMAIL_SECURE }},EMAIL_USER=${{ secrets.EMAIL_USER }},EMAIL_PASS=${{ secrets.EMAIL_PASS }},EMAIL_FROM=${{ secrets.EMAIL_FROM }}"

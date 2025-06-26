@@ -24,8 +24,12 @@ RUN npx prisma generate
 # Build the application
 RUN npm run build
 
-# Expose the port the app will run on
-EXPOSE 3000
+# Use ARG for build-time variable with Cloud Run standard port
+ARG PORT=8080
+ENV PORT=${PORT}
+
+# Expose the port from environment variable (Cloud Run uses 8080 by default)
+EXPOSE ${PORT}
 
 # Command to run the application
 CMD ["npm", "run", "start"]

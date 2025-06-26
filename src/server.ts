@@ -19,7 +19,7 @@ setupSwagger(app);
 app.use("/user", userRoutes);
 app.use('/products', productRoutes);
 
-const port = process.env.PORT || 3001; // Using process.env.PORT if available, otherwise default to 3001
+const port = process.env.PORT || 8080; // Using process.env.PORT if available, otherwise default to 8080 for Cloud Run
 const server = app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });
