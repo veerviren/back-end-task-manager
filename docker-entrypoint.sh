@@ -24,36 +24,37 @@ else
     fi
   
   # If Prisma can connect, that's also a good indicator
-  if npx prisma migrate status > /dev/null 2>&1; then
-    echo "Prisma can connect to PostgreSQL!"
-    break
-  fi
-  
-  echo "PostgreSQL is unavailable - sleeping (Attempt: $attempt_num/$max_attempts)"
-  sleep 2
-  attempt_num=$(( attempt_num + 1 ))
-done
-
-    if [ $attempt_num -gt $max_attempts ]; then
-      echo "Failed to connect to PostgreSQL after $max_attempts attempts. Exiting..."
-      exit 1
+    if npx prisma migrate status > /dev/null 2>&1; then
+      echo "Prisma can connect to PostgreSQL!"
+      break
     fi
+    
+    echo "PostgreSQL is unavailable - sleeping (Attempt: $attempt_num/$max_attempts)"
+    sleep 2
+    attempt_num=$(( attempt_num + 1 ))
+  done
 
-    echo "PostgreSQL is up - starting fresh database setup"
-
-    # Reset the database (drops all tables and recreates them) - only in development
-    echo "Resetting database..."
-    # Using --force to skip confirmation prompts and --skip-seed if you don't want to run seed scripts every time
-    npx prisma migrate reset --force --skip-generate
+  if [ $attempt_num -gt $max_attempts ]; then
+    echo "Failed to connect to PostgreSQL after $max_attempts attempts. Exiting..."
+    exit 1
   fi
+
+  echo "PostgreSQL is up - starting fresh database setup"
+
+  # Reset the database (drops all tables and recreates them) - only in development
+  echo "Resetting database..."
+  # Using --force to skip confirmation prompts and --skip-seed if you don't want to run seed scripts every time
+  npx prisma migrate reset --force --skip-generate
 fi
 
 # For production (Cloud Run), just deploy migrations without resetting
 if [ "$NODE_ENV" = "production" ]; then
-
-# Apply migrations
-echo "Applying migrations..."
-npx prisma migrate deploy
+  echo "Applying migrations for production..."
+  npx prisma migrate deploy
+else
+  # In development, migrations should already be done by the reset above
+  echo "Development migrations completed in earlier step"
+fi
 
 # Generate Prisma client if needed
 echo "Generating Prisma client..."
