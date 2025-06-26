@@ -16,10 +16,15 @@ app.use(express.json());
 // Initialize Swagger
 setupSwagger(app);
 
+// Add a health check endpoint for Cloud Run
+app.get('/_health', (req, res) => {
+  res.status(200).send({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 app.use("/user", userRoutes);
 app.use('/products', productRoutes);
 
-const port = process.env.PORT || 8080; // Using process.env.PORT if available, otherwise default to 8080 for Cloud Run
-const server = app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
+const port = parseInt(process.env.PORT || '8080', 10); // Ensure port is a number
+const server = app.listen(port, '0.0.0.0', () => {
+    console.log(`Server listening on 0.0.0.0:${port}`);
 });

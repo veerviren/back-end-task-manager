@@ -31,5 +31,8 @@ ENV PORT=${PORT}
 # Expose the port from environment variable (Cloud Run uses 8080 by default)
 EXPOSE ${PORT}
 
-# Command to run the application
+# Use entrypoint script for database setup (if needed)
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
+
+# Command to run the application if entrypoint fails
 CMD ["npm", "run", "start"]
