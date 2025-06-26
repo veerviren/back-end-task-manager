@@ -17,10 +17,8 @@ RUN npx prisma generate
 # Build the application
 RUN npm run build
 
-# Use environment variable for port
-ENV PORT=8080
-
-# Expose the port
+# Cloud Run automatically sets PORT env variable
+# We just need to expose the right port (8080 is standard for Cloud Run)
 EXPOSE 8080
 
 # Start the application

@@ -15,7 +15,7 @@ gcloud run deploy campus-exchange \
   --platform=managed \
   --allow-unauthenticated \
   --source=. \
-  --set-env-vars="NODE_ENV=production,PORT=8080"
+  --set-env-vars="NODE_ENV=production"
 
 # 2. Check if the deployment was successful
 if [ $? -eq 0 ]; then
