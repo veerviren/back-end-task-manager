@@ -2,29 +2,20 @@
 
 echo "Building and deploying a minimal test server to Cloud Run..."
 
-# Build the container locally
-echo "Building container locally..."
-docker build -t test-server:latest -f Dockerfile.test .
+# Using buildpacks directly with Cloud Run to skip local Docker build
+# This avoids permission issues with the Docker daemon
+echo "Deploying directly to Cloud Run using buildpacks..."
 
-# Tag it for Google Container Registry
-echo "Tagging for Google Container Registry..."
-docker tag test-server:latest gcr.io/campus-exchange-project/test-server:latest
-
-# Configure Docker to use gcloud credentials
-echo "Configuring Docker auth for GCR..."
-gcloud auth configure-docker
-
-# Push to Google Container Registry
-echo "Pushing to Google Container Registry..."
-docker push gcr.io/campus-exchange-project/test-server:latest
-
-# Deploy to Cloud Run
-echo "Deploying to Cloud Run..."
+# Deploy to Cloud Run using source-based deployment
+# This approach skips the need for local Docker and pushes directly to Cloud Run
+echo "Deploying to Cloud Run using source-based deployment..."
 gcloud run deploy test-server \
-  --image gcr.io/campus-exchange-project/test-server:latest \
+  --source . \
+  --dockerfile Dockerfile.test \
   --platform managed \
   --region us-central1 \
-  --allow-unauthenticated
+  --allow-unauthenticated \
+  --set-env-vars="NODE_ENV=production"
 
 # Check if the deployment was successful
 if [ $? -eq 0 ]; then

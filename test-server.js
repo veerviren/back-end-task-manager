@@ -1,4 +1,4 @@
-# Super minimal Express server for testing Cloud Run
+// Super minimal Express server for testing Cloud Run
 const express = require('express');
 const app = express();
 
