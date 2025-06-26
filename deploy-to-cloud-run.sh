@@ -15,7 +15,10 @@ gcloud run deploy campus-exchange \
   --platform=managed \
   --allow-unauthenticated \
   --source=. \
-  --set-env-vars="NODE_ENV=production"
+  --set-env-vars="NODE_ENV=production,DEBUG=express:*" \
+  --timeout=5m \
+  --cpu=1 \
+  --memory=512Mi
 
 # 2. Check if the deployment was successful
 if [ $? -eq 0 ]; then

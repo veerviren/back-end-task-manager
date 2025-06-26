@@ -21,6 +21,19 @@ app.get('/_health', (req, res) => {
   res.status(200).send({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Add a debug endpoint to help troubleshoot Cloud Run issues
+app.get('/_debug', (req, res) => {
+  const debugInfo = {
+    env: process.env,
+    nodeVersion: process.version,
+    platform: process.platform,
+    uptime: process.uptime(),
+    currentDir: __dirname,
+    timestamp: new Date().toISOString()
+  };
+  res.status(200).send(debugInfo);
+});
+
 app.use("/user", userRoutes);
 app.use('/products', productRoutes);
 

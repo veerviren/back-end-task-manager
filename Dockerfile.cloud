@@ -21,5 +21,9 @@ RUN npm run build
 # We just need to expose the right port (8080 is standard for Cloud Run)
 EXPOSE 8080
 
-# Start the application
-CMD ["npm", "run", "start"]
+# Add a simple startup script for debugging
+RUN echo '#!/bin/sh\necho "Starting application..."\necho "Environment: $NODE_ENV"\necho "PORT: $PORT"\necho "Directory listing:"\nls -la\necho "Starting Node.js application..."\nexec node dist/server.js' > /app/start.sh && \
+    chmod +x /app/start.sh
+
+# Start the application directly with Node.js instead of npm
+CMD ["/app/start.sh"]
