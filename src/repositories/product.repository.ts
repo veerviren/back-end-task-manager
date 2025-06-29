@@ -8,14 +8,21 @@ interface Payload {
 
 export class ProductMethods {
     
-    findAllProduct = async (userId: any) => {
-        const product = await prisma.product.findMany(
-            {
-                where: {
-                    sellerId: userId,
-                },
-            },
-        );
+    findAllProduct = async (userId: any, status?: string, category?: string) => {
+        console.log('findAllProduct params:', { userId, status, category });
+        let whereClause: any = { sellerId: userId };
+        if (status === 'Listings') {
+            whereClause.buyerId = null;
+        } else if (status === 'Sales') {
+            whereClause.buyerId = { not: null };
+        }
+        if (category) {
+            whereClause.category = category;
+        }
+        console.log('findAllProduct whereClause:', whereClause);
+        const product = await prisma.product.findMany({
+            where: whereClause,
+        });
         return product
     }
     

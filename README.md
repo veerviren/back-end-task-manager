@@ -50,16 +50,40 @@ A modern Node.js backend application for managing products and users built with 
 
 ### Running Locally
 
-1. Clone the repository
-2. Install dependencies:
+1. **Start the PostgreSQL database using Docker Compose:**
    ```bash
-   npm install
+   sudo docker-compose up -d postgres
    ```
-3. Set up environment variables in `.env` (see `.env.example`)
-4. Start the development server:
+   (Use `sudo` if you see permission errors.)
+
+2. **Configure your `.env` file:**
+   Make sure your `.env` contains:
+   ```env
+   DATABASE_URL="postgresql://postgres:postgres@localhost:5432/task_manager_db"
+   JWT_SECRET="your-secret-key"
+   PORT=3000
+   # ...other variables...
+   ```
+
+3. **Run database migrations:**
+   ```bash
+   sudo npx prisma migrate dev
+   ```
+
+4. **Start the backend server:**
    ```bash
    npm run dev
    ```
+   If you see `EADDRINUSE: address already in use :::3000`, stop the process using port 3000:
+   ```bash
+   sudo lsof -i :3000
+   sudo kill -9 <PID>
+   npm run dev
+   ```
+
+5. **Access the API:**
+   - The backend will be available at [http://localhost:3000](http://localhost:3000)
+   - Swagger API docs: [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
 
 ### Running with Docker
 
@@ -67,17 +91,17 @@ The application is containerized and set up to provide a fresh database on each 
 
 1. Build and start the containers:
    ```bash
-   docker-compose up --build
+   sudo docker compose up --build
    ```
 
 2. To stop the containers:
    ```bash
-   docker-compose down
+   sudo docker compose down
    ```
 
 3. To start again with a fresh database:
    ```bash
-   docker-compose up
+   sudo docker compose up --build
    ```
 
 The application will be available at http://localhost:3000

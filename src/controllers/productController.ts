@@ -9,10 +9,10 @@ import { Product } from './interfaces/product.interface'
 const productService = new ProductService()
 
 export const getAllProducts = async (req: Request, res: Response) => {
-    console.log("GET '/products'");
+    console.log("GET '/products' hello");
     const userId = (req as any).locals.userId;
-    console.log("userId is", userId);
-    const response = productService.getAllProductService(userId, res);
+    const { status, category } = req.query;
+    const response = await productService.getAllProductService(userId, res, status as string | undefined, category as string | undefined);
     return response;
 }
 
