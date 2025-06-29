@@ -124,6 +124,26 @@ On each Docker container startup, the database is automatically reset and migrat
 
 For detailed API documentation, visit the Swagger UI at `/api-docs` when the server is running.
 
+### Filtering Products by isSold
+
+You can filter products by their sold status using the `isSold` query parameter:
+
+- `isSold=true` returns only sold products
+- `isSold=false` returns only unsold products
+
+#### Example curl command:
+
+```
+curl -X GET "http://localhost:3000/products?isSold=true" -H "Authorization: Bearer <JWT_TOKEN>"
+curl -X GET "http://localhost:3000/products?isSold=false" -H "Authorization: Bearer <JWT_TOKEN>"
+```
+
+You can combine `isSold` with `category` and `status`:
+
+```
+curl -X GET "http://localhost:3000/products?category=Books&isSold=false&status=Listings" -H "Authorization: Bearer <JWT_TOKEN>"
+```
+
 ## Deployment to Google Cloud Run
 
 This application is configured for deployment to Google Cloud Run, a fully managed serverless platform for containerized applications.

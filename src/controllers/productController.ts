@@ -11,8 +11,14 @@ const productService = new ProductService()
 export const getAllProducts = async (req: Request, res: Response) => {
     console.log("GET '/products' hello");
     const userId = (req as any).locals.userId;
-    const { status, category } = req.query;
-    const response = await productService.getAllProductService(userId, res, status as string | undefined, category as string | undefined);
+    const { status, category, isSold } = req.query;
+    const response = await productService.getAllProductService(
+        userId,
+        res,
+        status as string | undefined,
+        category as string | undefined,
+        isSold as string | undefined
+    );
     return response;
 }
 

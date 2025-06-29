@@ -25,6 +25,7 @@ model User {
   verificationExpires DateTime?
   sellingProducts   Product[] @relation("SellerProducts")
   boughtProducts    Product[] @relation("BuyerProducts")
+  cartItems         CartItem[]
 }
 
 model Product {
@@ -49,4 +50,16 @@ model Product {
   isFeatured  Boolean   @default(false)
   discount    Float?    // Discount percentage
   tags        String[]  // Search tags
+  cartItems         CartItem[]
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
 }

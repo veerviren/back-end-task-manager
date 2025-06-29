@@ -8,16 +8,22 @@ interface Payload {
 
 export class ProductMethods {
     
-    findAllProduct = async (userId: any, status?: string, category?: string) => {
-        console.log('findAllProduct params:', { userId, status, category });
-        let whereClause: any = { sellerId: userId };
+    findAllProduct = async (userId: any, status?: string, category?: string, isSold?: string) => {
+        console.log('findAllProduct params:', { userId, status, category, isSold });
+        let whereClause: any = {};
         if (status === 'Listings') {
+            // Only products where current user is seller and no buyer
+            whereClause.sellerId = userId;
             whereClause.buyerId = null;
         } else if (status === 'Sales') {
             whereClause.buyerId = { not: null };
         }
         if (category) {
             whereClause.category = category;
+        }
+        if (typeof isSold !== 'undefined') {
+            if (isSold === 'true') whereClause.isSold = true;
+            else if (isSold === 'false') whereClause.isSold = false;
         }
         console.log('findAllProduct whereClause:', whereClause);
         const product = await prisma.product.findMany({

@@ -10,10 +10,10 @@ const productMethods = new ProductMethods()
 
 export class ProductService{
 
-    getAllProductService = async (userId: String, res: Response, status?: string, category?: string) => {
+    getAllProductService = async (userId: String, res: Response, status?: string, category?: string, isSold?: string) => {
         try {
-            console.log('getAllProductService params:', { userId, status, category });
-            const products = await productMethods.findAllProduct(userId, status, category);
+            console.log('getAllProductService params:', { userId, status, category, isSold });
+            const products = await productMethods.findAllProduct(userId, status, category, isSold);
             return res.status(200).json({ products })
         }
         catch (err) {

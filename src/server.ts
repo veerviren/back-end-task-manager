@@ -5,6 +5,7 @@ const userRoutes = require("./routes/userRoutes")
 const productRoutes = require("./routes/productRoutes")
 import dotenv from "dotenv";
 import { setupSwagger } from './swagger';
+const cartRoutes = require("./routes/cartRoutes");
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ setupSwagger(app);
 
 app.use("/user", userRoutes);
 app.use('/products', productRoutes);
+app.use('/cart', cartRoutes);
 
 const port = process.env.PORT || 8080; // Using process.env.PORT if available, otherwise default to 8080 for Cloud Run
 const server = app.listen(port, () => {
